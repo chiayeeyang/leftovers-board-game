@@ -14,7 +14,7 @@ A responsive, dependency-free single-page website. Open `index.html` in a modern
 - Pass GO adds 200 immediately. Jail subtracts 50 immediately. Both cancel any unfinished calculation and apply to the current balance.
 - AC cancels the pending calculation without deleting your balance. The ↺ control asks before resetting to 1500.
 - The keyboard supports digits, operators, Enter (=), Escape/Delete (AC), Backspace, and decimals.
-- Chance and Community Chest each have 10 randomized messages. Consecutive draws from a deck will not repeat. Cards do not automatically change your balance; follow the instructions and enter changes once using the calculator.
+- Chance and Community Chest each have 10 food-waste scenarios. Tap a card to flip it in place, then tap again to turn it face down. Each deck shuffles and shows all 10 scenarios before repeating. Cards do not automatically change your balance; follow the instructions and enter changes once using the calculator.
 - Roll Dice gives one random result from 1–6, with matching pips and an accessible announcement.
 - State lasts for this page session. Reloading starts fresh at 1500.
 

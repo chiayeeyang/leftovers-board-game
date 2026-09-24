@@ -41,7 +41,7 @@ $('#jail').addEventListener('click', () => quickTransaction(-50));
 document.querySelectorAll('[data-key]').forEach(button => button.addEventListener('click', () => press(button.dataset.key)));
 $('#reset').addEventListener('click', () => { if (confirm('Start over with a balance of 1500?')) { balance = 1500; entry = ''; operation = null; renderCalculator(); status('Fresh start. Your balance is 1500.'); } });
 document.addEventListener('keydown', event => {
-  if ($('#card-dialog').open || event.ctrlKey || event.metaKey || event.altKey) return;
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
   if (event.key === 'Enter' && event.target.closest('button,a')) return;
   const key = event.key === 'Enter' ? '=' : event.key === 'Escape' || event.key === 'Delete' ? 'AC' : event.key;
   if (/^[0-9.+*/=-]$/.test(key) || ['AC','Backspace'].includes(key)) { event.preventDefault(); press(key); }
@@ -68,33 +68,56 @@ async function rollDice() {
 $('#roll').addEventListener('click', () => { void rollDice(); });
 const decks = {
   chance: [
-    ['A fresh lap', 'Advance to GO. Collect 200.'], ['A lucky payout', 'Your investment pays off. Collect 50 from the bank.'],
-    ['Back you go', 'Go back three spaces. Follow the instructions on the space you reach.'], ['An unexpected repair', 'Pay 25 for each house and 100 for each hotel you own.'],
-    ['Take a trip', 'Advance to the nearest railroad. If it is owned, pay the usual rent. If you pass GO, collect 200.'], ['Caught speeding', 'Pay a speeding fine of 15 to the bank.'],
-    ['A little windfall', 'Collect 150 from the bank.'], ['Straight to jail', 'Go directly to jail. Do not pass GO and do not collect 200.'],
-    ['Your lucky break', 'Keep this card: get out of jail free. Remember it at the table until you use it.'], ['Treat the table', 'Pay each other player 50.']
+    ['Banana comeback', 'You bake overripe bananas into banana bread. Collect 50.'],
+    ['Forgotten greens', 'Your salad spoils at the back of the fridge. Pay 25.'],
+    ['Surprise supper', 'A Too Good To Go bag becomes tonight’s dinner. Collect 75.'],
+    ['Double shopping', 'You buy ingredients you already have. Pay 30.'],
+    ['Freezer hero', 'You freeze spare portions before they go to waste. Collect 100.'],
+    ['Bread reborn', 'You turn stale bread into crunchy croutons. Collect 25.'],
+    ['Too much pasta', 'You cook too much and throw the extra away. Pay 40.'],
+    ['Soup from scraps', 'Your usable vegetable trimmings become a tasty stock. Collect 50.'],
+    ['Meal-plan magic', 'You plan dinners around what is already in your fridge. Collect 100.'],
+    ['The forgotten box', 'You leave your restaurant leftovers behind. Pay 20.']
   ],
   community: [
-    ['A pleasant surprise', 'A bank error works in your favor. Collect 200.'], ['Doctor’s orders', 'Pay a doctor’s fee of 50.'],
-    ['Happy birthday!', 'Collect 10 from each other player.'], ['A helping hand', 'Your holiday fund pays out. Collect 100.'],
-    ['Time for tuition', 'Pay school fees of 50.'], ['A small refund', 'Collect a tax refund of 20.'],
-    ['Good news in the mail', 'You receive an inheritance. Collect 100.'], ['Hospital visit', 'Pay hospital fees of 100.'],
-    ['Community champion', 'You win a local contest. Collect 10.'], ['Back to the beginning', 'Advance to GO. Collect 200.']
+    ['Share the harvest', 'You share spare garden vegetables with neighbours. Collect 50.'],
+    ['OLIO rescue', 'You share unopened surplus food through OLIO. Collect 75.'],
+    ['Leftover potluck', 'Everyone brings a dish made with food they already have. Collect 25 from each player.'],
+    ['Community fridge', 'You help stock a community fridge with suitable surplus food. Collect 100.'],
+    ['Kitchen supplies', 'Help buy reusable containers for the community kitchen. Pay 50.'],
+    ['Recipe exchange', 'Share a leftover-food recipe idea with the table. Collect 25.'],
+    ['Market rescue', 'You help a stallholder share unsold produce. Collect 75.'],
+    ['Sharing shelf', 'Your building starts a pantry-sharing shelf. Collect 50.'],
+    ['Workshop day', 'Help fund a local food-storage workshop. Pay 25.'],
+    ['Pass it on', 'You teach a neighbour how to plan portions and waste less. Collect 50.']
   ]
 };
-const lastCard = {chance:-1, community:-1};
+const remainingCards = {chance: [], community: []};
+const lastCard = {chance: -1, community: -1};
 function drawCard(deck) {
-  let index; do { index = randomInt(decks[deck].length); } while (index === lastCard[deck]); lastCard[deck] = index;
+  const button = document.querySelector(`[data-deck="${deck}"]`);
+  const front = button.querySelector('.card-front');
+  const back = button.querySelector('.card-back');
+  const label = deck === 'chance' ? 'Chance' : 'Community Chest';
+  if (button.classList.contains('flipped')) {
+    button.classList.remove('flipped'); front.setAttribute('aria-hidden', 'false'); back.setAttribute('aria-hidden', 'true');
+    button.setAttribute('aria-label', `Draw a ${label} card`); return;
+  }
+  if (!remainingCards[deck].length) {
+    const cards = decks[deck].map((_, index) => index);
+    for (let i = cards.length - 1; i > 0; i--) { const j = randomInt(i + 1); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+    if (cards[cards.length - 1] === lastCard[deck]) [cards[0], cards[cards.length - 1]] = [cards[cards.length - 1], cards[0]];
+    remainingCards[deck] = cards;
+  }
+  const index = remainingCards[deck].pop(); lastCard[deck] = index;
   const [title, message] = decks[deck][index];
-  $('#card-type').textContent = deck === 'chance' ? 'Chance' : 'Community Chest';
-  $('#card-title').textContent = title; $('#card-message').textContent = message;
-  $('#card-dialog').style.borderTopColor = deck === 'chance' ? 'var(--green)' : 'var(--blue)';
-  $('#card-type').style.color = deck === 'chance' ? 'var(--green)' : 'var(--blue)';
-  $('#card-dialog').showModal();
+  back.querySelector('.scenario-title').textContent = title;
+  back.querySelector('.scenario-message').textContent = message;
+  button.classList.add('flipped'); front.setAttribute('aria-hidden', 'true'); back.setAttribute('aria-hidden', 'false');
+  button.setAttribute('aria-label', `${label}: ${title}. ${message} Turn card face down.`);
+  $('#card-announcement').textContent = `${label}: ${title}. ${message}`;
 }
 document.querySelectorAll('[data-deck]').forEach(button => button.addEventListener('click', () => drawCard(button.dataset.deck)));
-$('#close-card').addEventListener('click', () => $('#card-dialog').close());
-$('#card-done').addEventListener('click', () => $('#card-dialog').close());
 renderDie(dieValue);
 // Progressive enhancement; browsers without WebMCP use the ordinary controls.
 if (document.modelContext?.registerTool) {

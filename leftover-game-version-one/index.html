@@ -17,8 +17,8 @@
       <section class="cards" aria-label="Draw a card">
         <div class="section-heading"><h1>A little luck.</h1><span>Pick a card</span></div>
         <div class="card-pair">
-          <button class="deck chance" data-deck="chance" aria-label="Draw a Chance card"><span class="deck-name">CHANCE</span><span class="chance-art" aria-hidden="true"><img src="assets/takeaway.png" alt=""></span><span class="deck-action">Draw a card <span>↗</span></span></button>
-          <button class="deck community" data-deck="community" aria-label="Draw a Community Chest card"><span class="deck-name">COMMUNITY<br>CHEST</span><span class="chest-art" aria-hidden="true"><img src="assets/board.jpg" alt=""></span><span class="deck-action">Draw a card <span>↗</span></span></button>
+          <button class="deck chance" data-deck="chance" aria-label="Draw a Chance card"><span class="card-front"><span class="deck-name">CHANCE</span><span class="chance-art" aria-hidden="true"><img src="assets/takeaway.png" alt=""></span><span class="deck-action">Draw a card <span>↗</span></span></span><span class="card-back" aria-hidden="true"><span class="scenario-deck">CHANCE</span><strong class="scenario-title"></strong><span class="scenario-message"></span><span class="flip-hint">Tap to turn over</span></span></button>
+          <button class="deck community" data-deck="community" aria-label="Draw a Community Chest card"><span class="card-front"><span class="deck-name">COMMUNITY<br>CHEST</span><span class="chest-art" aria-hidden="true"><img src="assets/board.jpg" alt=""></span><span class="deck-action">Draw a card <span>↗</span></span></span><span class="card-back" aria-hidden="true"><span class="scenario-deck">COMMUNITY CHEST</span><strong class="scenario-title"></strong><span class="scenario-message"></span><span class="flip-hint">Tap to turn over</span></span></button>
         </div>
       </section>
       <section class="money" aria-labelledby="money-heading">
@@ -41,6 +41,6 @@
       </section>
     </main>
   </div>
-  <dialog id="card-dialog" aria-labelledby="card-title"><button class="close" id="close-card" aria-label="Close card">×</button><span id="card-type" class="card-type"></span><h2 id="card-title"></h2><p id="card-message"></p><button id="card-done">Back to the game</button><small>Follow the card on your board. Use the calculator for any money changes.</small></dialog>
+  <span id="card-announcement" class="sr-only" role="status"></span>
 </body>
 </html>
