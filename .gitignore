@@ -1,2 +1,6 @@
 .sites-runtime/
 .DS_Store
+.openai/
+.vercel/
+sources/
+AGENTS.md
